@@ -23,9 +23,12 @@ def hello_world():
 
 @app.route('/createSession', method='POST')
 def create_session():
-    pass
-
-
+    conn = get_db()
+    c = conn.cursor()
+    queryResult = c.execute("SELECT EXISTS(SELECT * from Patients WHERE patientID=" + pid +")",(pin,)).fetchone()[0]
+    if queryResult:
+    	c.execute("UPDATE Patients \
+    		SET hash="+request.form['hash']+",expires=time('now','+3 minutes')")
 @app.route('/form', methods=['POST', 'GET'])
 def form():
     pass
