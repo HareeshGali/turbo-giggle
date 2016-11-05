@@ -89,4 +89,5 @@ ENV/
 # Rope project settings
 .ropeproject
 
-    Contact GitHub API Training Shop Blog About
+# Database File
+turbo-giggle/turbo-giggle.db
