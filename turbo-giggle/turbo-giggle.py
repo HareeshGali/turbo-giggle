@@ -1,7 +1,6 @@
 import os
 import sqlite3
 from flask import Flask, g, request
-import json
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -22,12 +21,12 @@ def index():
     return app.send_static_file('index.html')
 
 
-@app.route('/signin.html')
+@app.route('/signin')
 def signin():
     return app.send_static_file('signin.html')
 
 
-@app.route('/form.html')
+@app.route('/form')
 def form():
     return app.send_static_file('form.html')
 
