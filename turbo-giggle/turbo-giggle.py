@@ -37,9 +37,8 @@ def form():
 def create_session():
     conn = get_db()
     c = conn.cursor()
-    body = request.get_json()
 
-    c.execute("insert into Sessions values (datetime('now','+3 minutes'), ?, ?);", (body['patientID'], body['hash']))
+    c.execute("insert into Sessions values (datetime('now','+3 minutes'), ?, ?);", (request.form['patientID'], request.form['hash']))
     conn.commit()
     return "Successfully created a session"
 
@@ -47,17 +46,17 @@ def create_session():
 def sendForm():
     conn = get_db()
     c = conn.cursor()
-    #body = request.get_json()
+    # body = request.get_json()
     c.execute("SELECT * FROM Patients;")
     queryResult = c.fetchone()
 
     cols = [desc[0] for desc in c.description]
     temp = []
-    q = dict(zip(cols,queryResult))
+    q = dict(zip(cols, queryResult))
     temp.append(q)
-    finRes = json.dumps(temp,indent=4)
+    finRes = json.dumps(temp, indent=4)
     close_db(conn)
-    return  str(finRes)
+    return str(finRes)
 
 
 @app.route('/validateSession', methods=['POST'])
