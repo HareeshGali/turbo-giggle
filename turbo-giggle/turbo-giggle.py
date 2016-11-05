@@ -38,9 +38,8 @@ def create_session():
     c = conn.cursor()
     body = request.get_json()
 
-    c.execute("INSERT INTO Sessions (expires, active, patientID, hash) VALUES \ (time('now','+3 minutes') , true, ?, ?)", (body['patientID'], body['hash']))
-
-    close_db()
+    c.execute("INSERT INTO Sessions VALUES (time('now','+3 minutes'), ?, 1, ?)", (body['patientID'], body['hash']))
+    return "Successfully created a session"
 
 
 @app.route('/validateSession', methods=['POST'])
@@ -96,4 +95,4 @@ def init_db():
 def initdb_command():
     """Initializes the database."""
     init_db()
-print 'Initialized the database.'
+    print 'Initialized the database.'
