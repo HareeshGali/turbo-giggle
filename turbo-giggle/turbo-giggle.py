@@ -18,8 +18,18 @@ app.config.update(dict(
 # Routes
 
 @app.route('/')
-def hello_world():
-    return 'Hello, World!'
+def index():
+    return app.send_static_file('index.html')
+
+
+@app.route('/signin.html')
+def signin():
+    return app.send_static_file('signin.html')
+
+
+@app.route('/form.html')
+def form():
+    return app.send_static_file('form.html')
 
 
 # takes in JSON from app
@@ -48,18 +58,6 @@ def validate_session():
     else:
         # todo send client(Doc) user does not exist error/wrong hash error
         pass
-
-
-# implement a form list later on, lists forms detailing vaccines etc.
-
-@app.route('/formList', methods=['POST', 'GET'])
-def formList():
-    pass
-
-
-@app.route('/form', methods=['POST', 'GET'])
-def form():
-    pass
 
 
 # Database Functions
