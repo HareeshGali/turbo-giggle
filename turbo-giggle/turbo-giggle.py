@@ -2,7 +2,7 @@ import os
 import sqlite3
 import md5
 from flask import Flask, g, request
-
+import json
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -43,19 +43,21 @@ def create_session():
     conn.commit()
     return "Successfully created a session"
 
-@app.route('/docForm', methods=['POST'])
+@app.route('/docForm', methods=['POST', 'GET'])
 def sendForm():
     conn = get_db()
     c = conn.cursor()
-    body = request.get_json()
-    c.execute("SELECT * FROM Patients WHERE patientID = ? LIMIT 1",(body['patientID'],))
-    queryResult = c.fetchone()[0]
-    cols = [desc[0] for desc in cursor.description]
+    #body = request.get_json()
+    c.execute("SELECT * FROM Patients;")
+    queryResult = c.fetchone()
+
+    cols = [desc[0] for desc in c.description]
     temp = []
-    for q in queryResult:
-        q = dict(zip(cols,q))
-        temp.append(q)
+    q = dict(zip(cols,queryResult))
+    temp.append(q)
     finRes = json.dumps(temp,indent=4)
+    close_db(conn)
+    return  str(finRes)
 
 
 @app.route('/validateSession', methods=['POST'])
