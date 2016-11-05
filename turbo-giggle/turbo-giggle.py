@@ -42,7 +42,8 @@ def create_session():
     conn.commit()
     return "Successfully created a session"
 
-@app.route('/docForm', methods=['POST', 'GET'])
+
+@app.route('/docForm', methods=['GET'])
 def sendForm():
     conn = get_db()
     c = conn.cursor()
@@ -55,7 +56,6 @@ def sendForm():
     q = dict(zip(cols, queryResult))
     temp.append(q)
     finRes = json.dumps(temp, indent=4)
-    close_db(conn)
     return str(finRes)
 
 
