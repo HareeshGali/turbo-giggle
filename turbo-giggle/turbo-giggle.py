@@ -43,6 +43,20 @@ def create_session():
     conn.commit()
     return "Successfully created a session"
 
+@app.route('/docForm', methods=['POST'])
+def sendForm():
+    conn = get_db()
+    c = conn.cursor()
+    body = request.get_json()
+    c.execute("SELECT * FROM Patients WHERE patientID = ? LIMIT 1",(body['patientID'],))
+    queryResult = c.fetchone()[0]
+    cols = [desc[0] for desc in cursor.description]
+    temp = []
+    for q in queryResult:
+        q = dict(zip(cols,q))
+        temp.append(q)
+    finRes = json.dumps(temp,indent=4)
+
 
 @app.route('/validateSession', methods=['POST'])
 def validate_session():
