@@ -25,7 +25,7 @@ def hello_world():
 def create_session():
     conn = get_db()
     c = conn.cursor()
-    queryResult = c.execute("SELECT EXISTS(SELECT * from Patients WHERE patientID=" + pid +")",(pin,)).fetchone()[0]
+    queryResult = c.execute("SELECT EXISTS(SELECT * from Patients WHERE patientID=" + request.form['patientID'] +")",(patientID,)).fetchone()[0]
     if queryResult:
     	c.execute("UPDATE Patients \
     		SET hash="+request.form['hash']+",expires=time('now','+3 minutes')")
