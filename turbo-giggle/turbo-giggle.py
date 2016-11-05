@@ -1,6 +1,7 @@
 import os
 import sqlite3
-from flask import Flask, g
+from flask import Flask, g, request
+import json
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -21,41 +22,39 @@ def hello_world():
     return 'Hello, World!'
 
 
-@app.route('/createSession', method='POST')
+# takes in JSON from app
+@app.route('/createSession', methods=['POST'])
 def create_session():
     conn = get_db()
     c = conn.cursor()
-    queryResult = c.execute("SELECT EXISTS(SELECT * from Patients WHERE patientID=%s)",request.form['patientID']).fetchone()[0]
-    if queryResult:
-    	c.execute("UPDATE Patients \
-    		validate = FALSE \
-    		SET hash="+request.form['hash']+",expires=time('now','+3 minutes') \
-    		WHERE patientID=request.form['patientID']")
+    body = request.get_json()
+
+    c.execute("INSERT INTO Sessions (expires, active, patientID, hash) VALUES \ (time('now','+3 minutes') , true, ?, ?)", (body['patientID'], body['hash']))
+
     close_db()
 
-@app.route('/validateSession', method='POST')
+
+@app.route('/validateSession', methods=['POST'])
 def validate_session():
-	conn = get_db()
+    conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT EXISTS(SELECT * from Patients WHERE patientID=%s AND hash=%s)",request.form['patientID'],request.form['hash'])
+    c.execute("SELECT EXISTS(SELECT * from Patients WHERE patientID=? AND hash=?)", (request.form['patientID'], request.form['hash']))
     queryResult = c.fetchone()[0]
     if queryResult:
     	c.execute("UPDATE Patients \
-    		validate = TRUE \
-    		SET expires=time('now','+1 day') \
-    		WHERE patientID=request.form['patientID']")
+            validate = TRUE \
+            SET expires=time('now','+1 day') \
+            WHERE patientID=request.form['patientID']")
     else:
-    	#todo send client(Doc) user does not exist error/wrong hash error
-    	pass
+        # todo send client(Doc) user does not exist error/wrong hash error
+        pass
 
 
+# implement a form list later on, lists forms detailing vaccines etc.
 
-
-
-#implement a form list later on, lists forms detailing vaccines etc.
 @app.route('/formList', methods=['POST', 'GET'])
 def formList():
-	pass
+    pass
 
 
 @app.route('/form', methods=['POST', 'GET'])
