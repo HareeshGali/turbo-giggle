@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import md5
 from flask import Flask, g, request
 
 app = Flask(__name__)
@@ -38,24 +39,24 @@ def create_session():
     c = conn.cursor()
     body = request.get_json()
 
-    c.execute("INSERT INTO Sessions VALUES (time('now','+3 minutes'), ?, 1, ?)", (body['patientID'], body['hash']))
+    c.execute("insert into Sessions values (time('now','+3 minutes'), ?, ?);", (body['patientID'], body['hash']))
+    conn.commit()
     return "Successfully created a session"
 
 
 @app.route('/validateSession', methods=['POST'])
 def validate_session():
+    hash = str(md5.new(request.form['passcode']).hexdigest())
+    print hash
+
     conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT EXISTS(SELECT * from Patients WHERE patientID=? AND hash=?)", (request.form['patientID'], request.form['hash']))
-    queryResult = c.fetchone()[0]
+    c.execute("SELECT EXISTS(SELECT * from Sessions WHERE hash=?)", (hash,))
+    queryResult = bool(c.fetchone()[0])
     if queryResult:
-    	c.execute("UPDATE Patients \
-            validate = TRUE \
-            SET expires=time('now','+1 day') \
-            WHERE patientID=request.form['patientID']")
+        return "Session is good", 200
     else:
-        # todo send client(Doc) user does not exist error/wrong hash error
-        pass
+        return "Session not found", 403
 
 
 # Database Functions
