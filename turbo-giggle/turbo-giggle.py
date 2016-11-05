@@ -2,7 +2,7 @@ import os
 import sqlite3
 import md5
 from flask import Flask, g, request
-
+import json
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -39,9 +39,25 @@ def create_session():
     c = conn.cursor()
     body = request.get_json()
 
-    c.execute("insert into Sessions values (time('now','+3 minutes'), ?, ?);", (body['patientID'], body['hash']))
+    c.execute("insert into Sessions values (datetime('now','+3 minutes'), ?, ?);", (body['patientID'], body['hash']))
     conn.commit()
     return "Successfully created a session"
+
+@app.route('/docForm', methods=['POST', 'GET'])
+def sendForm():
+    conn = get_db()
+    c = conn.cursor()
+    #body = request.get_json()
+    c.execute("SELECT * FROM Patients;")
+    queryResult = c.fetchone()
+
+    cols = [desc[0] for desc in c.description]
+    temp = []
+    q = dict(zip(cols,queryResult))
+    temp.append(q)
+    finRes = json.dumps(temp,indent=4)
+    close_db(conn)
+    return  str(finRes)
 
 
 @app.route('/validateSession', methods=['POST'])
@@ -51,7 +67,7 @@ def validate_session():
 
     conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT EXISTS(SELECT * from Sessions WHERE hash=?)", (hash,))
+    c.execute("SELECT EXISTS(SELECT * from Sessions WHERE hash=? and (julianday(datetime('now')) - julianday(expires) <= 0))", (hash,))
     queryResult = bool(c.fetchone()[0])
     if queryResult:
         return "Session is good", 200

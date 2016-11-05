@@ -25,7 +25,7 @@ body {
   z-index: 2;
 }
 
-.form-signin input[type="password"] {
+.form-signin input {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
