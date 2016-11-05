@@ -28,7 +28,8 @@ def create_session():
     queryResult = c.execute("SELECT EXISTS(SELECT * from Patients WHERE patientID=" + request.form['patientID'] +")",(patientID,)).fetchone()[0]
     if queryResult:
     	c.execute("UPDATE Patients \
-    		SET hash="+request.form['hash']+",expires=time('now','+3 minutes')")
+    		SET hash="+request.form['hash']+",expires=time('now','+3 minutes') \
+    		WHERE patientID=request.form['patientID']")
 @app.route('/form', methods=['POST', 'GET'])
 def form():
     pass
