@@ -34,7 +34,6 @@ var main = function() {
       requestData[cols[i]] = $('#' + cols[i]).val();
     }
     requestData.patientID = 1;
-    requestData.address = '';
 
     console.log(requestData);
     var post = $.post('/docForm', JSON.stringify(requestData));
