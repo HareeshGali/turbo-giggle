@@ -66,6 +66,7 @@ def sendForm():
             c.execute("UPDATE Patients \
             SET ?=? \
             WHERE patientID=?"(key, jsonArr[key], jsonArr['patientID']))
+            c.commit()
         return
 
 
