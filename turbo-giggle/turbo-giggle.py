@@ -43,7 +43,7 @@ def create_session():
     return "Successfully created a session"
 
 
-@app.route('/docForm', methods=['GET'])
+@app.route('/docForm', methods=['GET', 'POST'])
 def sendForm():
     if request.method == "GET":
         conn = get_db()
@@ -60,14 +60,16 @@ def sendForm():
         return str(finRes)
     elif request.method == "POST":
         conn = get_db()
-        jsonArr = request.get_json()
+        jsonArr = request.get_json(force=True)
         c = conn.cursor()
         for key in jsonArr.keys():
+            if key == 'patientID':
+                continue
             c.execute("UPDATE Patients \
-            SET ?=? \
-            WHERE patientID=?"(key, jsonArr[key], jsonArr['patientID']))
-            c.commit()
-        return
+            SET " + key + "=? \
+            WHERE patientID=1;", (jsonArr[key],))
+            conn.commit()
+        return "Successfully updated patient"
 
 
 @app.route('/validateSession', methods=['POST'])
