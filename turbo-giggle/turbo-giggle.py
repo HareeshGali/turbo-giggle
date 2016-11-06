@@ -62,9 +62,10 @@ def sendForm():
         conn = get_db()
         jsonArr = request.get_json()
         c = conn.cursor()
-        c.execute("UPDATE Patients \
-            SET name=?,dateofBirth=?,address=?,primaryPhys=?,phoneNum=?,medHistory=?,prescribeMeds=? \
-            WHERE patientID=?"(jsonArr['name'], jsonArr['dateofBirth'], jsonArr['address'], jsonArr['primaryPhys'], jsonArr['phoneNum'], jsonArr['medHistory'], jsonArr['prescribeMeds'], jsonArr['patientID']))
+        for key in jsonArr.keys():
+            c.execute("UPDATE Patients \
+            SET ?=? \
+            WHERE patientID=?"(key, jsonArr[key], jsonArr['patientID']))
         return
 
 
