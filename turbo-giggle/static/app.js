@@ -9,6 +9,20 @@ var main = function() {
       $('#signin-error').show();
     });
   });
+
+  $('#docForm').ready(function(event) {
+    var post = $.get('/docForm', function(data) {
+      var response = JSON.parse(data)[0];
+      console.log(response);
+      for (var col in response) {
+        console.log(col);
+        $('#' + col).val(response[col]);
+      }
+    });
+    post.fail(function(data) {
+      console.error("FAIL:" + data);
+    });
+  });
 };
 
 $(document).ready(main);
