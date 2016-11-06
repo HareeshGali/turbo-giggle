@@ -45,18 +45,27 @@ def create_session():
 
 @app.route('/docForm', methods=['GET'])
 def sendForm():
-    conn = get_db()
-    c = conn.cursor()
-    # body = request.get_json()
-    c.execute("SELECT * FROM Patients;")
-    queryResult = c.fetchone()
+    if request.method == "GET":
+        conn = get_db()
+        c = conn.cursor()
+        # body = request.get_json()
+        c.execute("SELECT * FROM Patients;")
+        queryResult = c.fetchone()
 
-    cols = [desc[0] for desc in c.description]
-    temp = []
-    q = dict(zip(cols, queryResult))
-    temp.append(q)
-    finRes = json.dumps(temp, indent=4)
-    return str(finRes)
+        cols = [desc[0] for desc in c.description]
+        temp = []
+        q = dict(zip(cols, queryResult))
+        temp.append(q)
+        finRes = json.dumps(temp, indent=4)
+        return str(finRes)
+    elif request.method == "POST":
+        conn = get_db()
+        jsonArr = request.get_json()
+        c = conn.cursor()
+        c.execute("UPDATE Patients \
+            SET name=?,dateofBirth=?,address=?,primaryPhys=?,phoneNum=?,medHistory=?,prescribeMeds=? \
+            WHERE patientID=?"(jsonArr['name'], jsonArr['dateofBirth'], jsonArr['address'], jsonArr['primaryPhys'], jsonArr['phoneNum'], jsonArr['medHistory'], jsonArr['prescribeMeds'], jsonArr['patientID']))
+        return
 
 
 @app.route('/validateSession', methods=['POST'])
