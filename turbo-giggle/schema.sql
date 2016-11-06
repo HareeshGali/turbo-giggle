@@ -14,4 +14,4 @@ CREATE table if not exists Patients(
   prescribeMeds TEXT NOT NULL
 
 );
-insert into Patients values(1, "meme", "dob","ddr","phyts","phone nu","durgs","legal durgs")
+insert into Patients values(1, "meme", "dob","phyts","phone nu","durgs","legal durgs")
