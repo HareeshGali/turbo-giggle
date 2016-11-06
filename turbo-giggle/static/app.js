@@ -41,6 +41,7 @@ var main = function() {
       $('#signin-success').show();
       $('#form-error').hide();
       console.log(data);
+      window.location.href = '/';
     });
     post.fail(function(err) {
       $('#signin-success').hide();
