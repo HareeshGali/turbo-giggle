@@ -37,8 +37,8 @@ def form():
 def create_session():
     conn = get_db()
     c = conn.cursor()
-
-    c.execute("insert into Sessions values (datetime('now','+3 minutes'), ?, ?);", (request.form['patientID'], request.form['hash']))
+    json = request.get_json(force=True)
+    c.execute("insert into Sessions values (datetime('now','+3 minutes'), ?, ?);", (json['patientID'], json['hash']))
     conn.commit()
     return "Successfully created a session"
 
